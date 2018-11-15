@@ -29,6 +29,12 @@ def thalammerize(image):
     image = np.clip(image, 0, 2**16-1)
     return image
 
+def dethalammerize(image, shift1=True):
+    image = image / ((2**16)/10)
+    if shift1:
+        image = image - 1
+    return image
+
 def read_sis_header(filename, len=512):
     with open(filename, 'rb') as f:
         head = f.read(8)
@@ -85,7 +91,8 @@ def read_sis(filename, verbose=False, full_output=False):
 
     # Reading the images
     image = rawdata[-width*height:]
-    image.resize(*shape).atype(np.float)
+    image.resize(*shape)
+    image = image.astype(np.float)
 
     # defines the two images in the sis
     if full_output:
